@@ -1,0 +1,9 @@
+README.md
+setup.sh
+dockerimages/*
+
+shared/outputs/*.png
+shared/outputs/*.jpg
+shared/outputs/*.jpeg
+
+log
