@@ -6,6 +6,7 @@
 
 - Loading weights from [[openai/clip-vit-large-patch14]](https://huggingface.co/openai/clip-vit-large-patch14) as a pretrained model for `CLIPFeatureExtractor`.
 - Loading weights from [[CompVis/stable-diffusion-v-1-4-original]](https://huggingface.co/CompVis/stable-diffusion-v-1-4-original) and saving it as `model.ckpt`.
+  - Resumed from `sd-v1-2.ckpt`. 225k steps at resolution `512x512` on "laion-aesthetics v2 5+" and 10% dropping of the text-conditioning to improve [classifier-free guidance sampling](https://arxiv.org/abs/2207.12598).
 
 
 ### Get started
@@ -52,6 +53,91 @@ $ python scripts/txt2img.py --prompt "a photograph of an astronaut riding a hors
 # image-to-image
 $ python scripts/img2img.py --prompt "A fantasy landscape, trending on artstation" --init-img shared/inputs/sketch-mountains-input.jpg --strength 0.8 --outdir shared/outputs/img2img-samples
 ```
+
+All supported arguments are listed below(type `python scripts/*2img.py --help`)
+
+```
+usage: txt2img.py [-h] [--prompt [PROMPT]] [--outdir [OUTDIR]] [--skip_grid] [--skip_save] [--ddim_steps DDIM_STEPS] [--plms] [--laion400m] [--fixed_code] [--ddim_eta DDIM_ETA]
+                  [--n_iter N_ITER] [--H H] [--W W] [--C C] [--f F] [--n_samples N_SAMPLES] [--n_rows N_ROWS] [--scale SCALE] [--from-file FROM_FILE] [--config CONFIG] [--ckpt CKPT]
+                  [--seed SEED] [--precision {full,autocast}]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --prompt [PROMPT]     the prompt to render
+  --outdir [OUTDIR]     dir to write results to
+  --skip_grid           do not save a grid, only individual samples. Helpful when evaluating lots of samples
+  --skip_save           do not save individual samples. For speed measurements.
+  --ddim_steps DDIM_STEPS
+                        number of ddim sampling steps
+  --plms                use plms sampling
+  --laion400m           uses the LAION400M model
+  --fixed_code          if enabled, uses the same starting code across samples
+  --ddim_eta DDIM_ETA   ddim eta (eta=0.0 corresponds to deterministic sampling
+  --n_iter N_ITER       sample this often
+  --H H                 image height, in pixel space
+  --W W                 image width, in pixel space
+  --C C                 latent channels
+  --f F                 downsampling factor
+  --n_samples N_SAMPLES
+                        how many samples to produce for each given prompt. A.k.a. batch size
+  --n_rows N_ROWS       rows in the grid (default: n_samples)
+  --scale SCALE         unconditional guidance scale: eps = eps(x, empty) + scale * (eps(x, cond) - eps(x, empty))
+  --from-file FROM_FILE
+                        if specified, load prompts from this file
+  --config CONFIG       path to config which constructs model
+  --ckpt CKPT           path to checkpoint of model
+  --seed SEED           the seed (for reproducible sampling)
+  --precision {full,autocast}
+                        evaluate at this precision
+
+---
+
+usage: img2img.py [-h] [--prompt [PROMPT]] [--init-img [INIT_IMG]]                                                                
+                  [--outdir [OUTDIR]] [--skip_grid] [--skip_save]                                                                 
+                  [--ddim_steps DDIM_STEPS] [--plms] [--fixed_code]                                                               
+                  [--ddim_eta DDIM_ETA] [--n_iter N_ITER] [--C C] [--f F]                                                         
+                  [--n_samples N_SAMPLES] [--n_rows N_ROWS] [--scale SCALE]                                                       
+                  [--strength STRENGTH] [--from-file FROM_FILE]                                                                   
+                  [--config CONFIG] [--ckpt CKPT] [--seed SEED]                                                                   
+                  [--precision {full,autocast}]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --prompt [PROMPT]     the prompt to render
+  --init-img [INIT_IMG]
+                        path to the input image
+  --outdir [OUTDIR]     dir to write results to
+  --skip_grid           do not save a grid, only individual samples. Helpful
+                        when evaluating lots of samples
+  --skip_save           do not save indiviual samples. For speed measurements.
+  --ddim_steps DDIM_STEPS
+                        number of ddim sampling steps
+  --plms                use plms sampling
+  --fixed_code          if enabled, uses the same starting code across all
+                        samples
+  --ddim_eta DDIM_ETA   ddim eta (eta=0.0 corresponds to deterministic
+                        sampling
+  --n_iter N_ITER       sample this often
+  --C C                 latent channels
+  --f F                 downsampling factor, most often 8 or 16
+  --n_samples N_SAMPLES
+                        how many samples to produce for each given prompt.
+                        A.k.a batch size
+  --n_rows N_ROWS       rows in the grid (default: n_samples)
+  --scale SCALE         unconditional guidance scale: eps = eps(x, empty) +
+                        scale * (eps(x, cond) - eps(x, empty))
+  --strength STRENGTH   strength for noising/unnoising. 1.0 corresponds to
+                        full destruction of information in init image
+  --from-file FROM_FILE
+                        if specified, load prompts from this file
+  --config CONFIG       path to config which constructs model
+  --ckpt CKPT           path to checkpoint of model
+  --seed SEED           the seed (for reproducible sampling)
+  --precision {full,autocast}
+                        evaluate at this precision
+
+```
+
 
 ### Build
 
